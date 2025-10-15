@@ -9,9 +9,13 @@ public class PickUpManager : MonoBehaviour
     private Vector3 pickupPropRot;
     void Update () 
 	{
+#if UNITY_EDITOR
+		if (Input.GetKeyDown(KeyCode.R))
+#else
 		if (UnityEngine.N3DS.GamePad.GetButtonTrigger(N3dsButton.X))
-		{
-			if (!hold)
+#endif
+        {
+            if (!hold)
 			{
                 hold = PickUpObject();
             }
