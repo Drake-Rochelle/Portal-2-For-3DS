@@ -168,7 +168,8 @@ public class PlayerController3D : MonoBehaviour
         {
             sidewaysForce -= 1;
         }
-        if(forwardForce!=0 || sidewaysForce != 0)
+#endif
+        if (forwardForce!=0 || sidewaysForce != 0)
         {
             PortalGunAnimator.Instance.animate = true;
         }
@@ -176,7 +177,6 @@ public class PlayerController3D : MonoBehaviour
         {
             PortalGunAnimator.Instance.animate = false;
         }
-#endif
         if (horVel.magnitude < maxSpeed)
         {
             rb.velocity += transform.forward * forwardForce * accelSpeed;
