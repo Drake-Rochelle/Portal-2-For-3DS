@@ -4,17 +4,17 @@ public class PortalTrigger : MonoBehaviour
     [HideInInspector] public BoxCollider boundCollider;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private Transform otherPortal;
-    [SerializeField] private int maxTriggers;
-    [SerializeField] private string player;
     [SerializeField] private BoxCollider portalBoxCollider;
-    private int triggered;
-    private int exited;
     public bool placed;
     private bool portaled;
     private Vector3 oldPos;
     void Awake()
     {
         oldPos = playerTransform.position;
+    }
+    void Update()
+    {
+        Debug.DrawLine(this.transform.position, this.transform.position+this.transform.forward);
     }
     void FixedUpdate()
     {
@@ -23,30 +23,35 @@ public class PortalTrigger : MonoBehaviour
     }
     void OnTriggerEnter(Collider col)
     {
-        if (col.gameObject.name == player)
+        if (col.gameObject.name == "Player")
         {
-            if (triggered >= maxTriggers) { return; }
-            triggered++;
             if (otherPortal.gameObject.GetComponent<PortalTrigger>().placed)
             {
                 boundCollider.isTrigger = true;
             }
         }
+        if (col.gameObject.name == "Portal Trigger")
+        {
+            if (!portaled&&otherPortal.gameObject.GetComponent<PortalTrigger>().placed)
+            {
+                playerTransform.transform.position = otherPortal.position + (otherPortal.forward*((SphereCollider)col).radius*2.5f);
+
+                Quaternion delta = Quaternion.FromToRotation(-this.transform.forward,otherPortal.transform.forward);
+
+                playerTransform.rotation = Quaternion.Euler(new Vector3(0, playerTransform.rotation.eulerAngles.y + delta.eulerAngles.y, 0));
+                playerTransform.gameObject.GetComponent<Rigidbody>().velocity = delta * playerTransform.gameObject.GetComponent<Rigidbody>().velocity;
+                otherPortal.gameObject.GetComponent<PortalTrigger>().portaled = true;
+            }
+        }
     }
     void OnTriggerExit(Collider col)
     {
-        if (col.gameObject.name == player)
+        if (col.gameObject.name == "Portal Trigger")
         {
-            if (exited >= maxTriggers) { return; }
-            exited++;
-            if (!portaled && otherPortal.gameObject.GetComponent<PortalTrigger>().placed)
-            {
-                playerTransform.transform.position = otherPortal.position;
-                playerTransform.transform.rotation = otherPortal.rotation;
-                playerTransform.transform.rotation = Quaternion.Euler(0, playerTransform.transform.rotation.y, 0);
-                otherPortal.gameObject.GetComponent<PortalTrigger>().portaled = true;
-            }
             portaled = false;
+        }
+        if (col.gameObject.name == "Player")
+        {
             boundCollider.isTrigger = false;
         }
     }
