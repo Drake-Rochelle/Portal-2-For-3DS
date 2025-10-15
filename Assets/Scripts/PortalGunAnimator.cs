@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 public class PortalGunAnimator : MonoBehaviour 
 {
 	[SerializeField] private float intensity;
 	[SerializeField] private float speed;
-    public bool animate;
+    [SerializeField] private Sprite[] sprites;
+    [HideInInspector] public bool animate;
+    [HideInInspector] public int color;
     private RectTransform t;
     private Vector2 off;
+    private Image image;
     public static PortalGunAnimator Instance
     {
         get; private set;
@@ -21,6 +25,7 @@ public class PortalGunAnimator : MonoBehaviour
         {
             Instance = this;
         }
+        image = GetComponent<Image>();
     }
     void Start () 
 	{
@@ -29,6 +34,10 @@ public class PortalGunAnimator : MonoBehaviour
 	}
 	void Update () 
 	{
+        if (sprites[color] != image.sprite)
+        {
+            image.sprite = sprites[color];
+        }
         if (animate)
         {
             t.anchoredPosition = new Vector2(Mathf.Sin(Time.time * speed) * intensity, 0)+off;

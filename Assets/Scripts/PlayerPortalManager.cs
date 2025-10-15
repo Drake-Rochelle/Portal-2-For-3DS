@@ -53,6 +53,7 @@ public class PlayerPortalManager : MonoBehaviour
             portals[color].transform.rotation = Quaternion.LookRotation(hit.normal);
             portalScripts[color].SetBoundCollider((BoxCollider)hit.collider);
             portalScripts[color].placed = true;
+            PortalGunAnimator.Instance.color = color+1;
             return true;
         }
         return false;
