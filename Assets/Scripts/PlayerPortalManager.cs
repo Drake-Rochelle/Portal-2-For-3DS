@@ -8,19 +8,8 @@ public class PlayerPortalManager : MonoBehaviour
     [SerializeField] private GameObject[] portals;
     [SerializeField] private float offset;
     [SerializeField] private PortalTrigger[] portalScripts;
-    private List<Vector3> starts;
-    private List<Vector3> ends;
-    void Start()
-    {
-        starts = new List<Vector3>();
-        ends = new List<Vector3>();
-    }
     void Update () 
 	{
-        for(int i = 0; i < starts.Count; i++)
-        {
-            Debug.DrawLine(starts[i],ends[i],Color.red);
-        }
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.E))
 #else
@@ -60,8 +49,6 @@ public class PlayerPortalManager : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(cam.position, cam.forward, out hit, 200, portalableMask))
         {
-            starts.Add(cam.position);
-            ends.Add(hit.point);
             portals[color].transform.position = hit.point+hit.normal*offset;
             portals[color].transform.rotation = Quaternion.LookRotation(hit.normal);
             portalScripts[color].SetBoundCollider((BoxCollider)hit.collider);
