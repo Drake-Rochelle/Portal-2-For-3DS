@@ -1,8 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class Bootloader : MonoBehaviour 
 {
     [SerializeField] private string[] scenes;
+    [SerializeField] private string[] gameScenes;
+    [SerializeField] private Sprite[] loadingScreens;
     private int state;
     public static Bootloader Instance
     {
@@ -22,7 +26,14 @@ public class Bootloader : MonoBehaviour
     }
     public void NextScene()
     {
-        TransitionManager.Instance.Scene(scenes[state]);
+        if (gameScenes.Contains<string>(scenes[state]))
+        {
+            TransitionManager.Instance.Scene(scenes[state], loadingScreens[Random.Range(0,loadingScreens.Length)]);
+        }
+        else
+        {
+            TransitionManager.Instance.Scene(scenes[state]);
+        }
         state++;
         state %= scenes.Length;
     }

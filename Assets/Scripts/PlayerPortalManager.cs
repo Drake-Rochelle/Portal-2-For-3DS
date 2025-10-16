@@ -18,6 +18,8 @@ public class PlayerPortalManager : MonoBehaviour
         {
             if (ShootPortal(1))
             {
+                PortalGunAnimator.Instance.color = 1;
+                PortalGunAnimator.Instance.update = true;
                 int curr = CrosshairManager.Instance.crosshair;
                 if (curr == 0) { curr = 1; }
                 else if (curr == 1) { return; }
@@ -35,6 +37,8 @@ public class PlayerPortalManager : MonoBehaviour
         {
             if (ShootPortal(0))
             {
+                PortalGunAnimator.Instance.color = 0;
+                PortalGunAnimator.Instance.update = true;
                 int curr = CrosshairManager.Instance.crosshair;
                 if (curr == 0) { curr = 2; }
                 else if (curr == 1) { curr = 3; }

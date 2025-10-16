@@ -7,6 +7,7 @@ public class TransitionManager : MonoBehaviour
 {
     [SerializeField] private Vector3 fadeInHoldFadeOut;
     [SerializeField] private Image fade;
+    [SerializeField] private Image image;
     public static TransitionManager Instance
     {
         get; private set;
@@ -24,9 +25,16 @@ public class TransitionManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         StartCoroutine(FadeIn());
     }
-    public void Scene(string name)
+    public void Scene(string name, Sprite image = null)
     {
-        StartCoroutine(LoadScene(name));
+        if (image == null)
+        {
+            StartCoroutine(LoadScene(name));
+        }
+        else
+        {
+            StartCoroutine(LoadSceneImage(name, image));
+        }
     }
     private IEnumerator FadeIn()
     {
@@ -44,7 +52,7 @@ public class TransitionManager : MonoBehaviour
         while (timer < fadeInHoldFadeOut.x)
         {
             timer += Time.unscaledDeltaTime;
-            fade.color = new Color(fade.color.r, fade.color.g, fade.color.b,timer/fadeInHoldFadeOut.x);
+            fade.color = new Color(fade.color.r, fade.color.g, fade.color.b, timer / fadeInHoldFadeOut.x);
             yield return null;
         }
         SceneManager.LoadScene(name);
@@ -60,10 +68,69 @@ public class TransitionManager : MonoBehaviour
             yield return null;
         }
         timer = 0;
-        while (timer<fadeInHoldFadeOut.z)
+        while (timer < fadeInHoldFadeOut.z)
         {
             timer += Time.unscaledDeltaTime;
-            fade.color = new Color(fade.color.r, fade.color.g, fade.color.b, 1-(timer / fadeInHoldFadeOut.z));
+            fade.color = new Color(fade.color.r, fade.color.g, fade.color.b, 1 - (timer / fadeInHoldFadeOut.z));
+            yield return null;
+        }
+    }
+    private IEnumerator LoadSceneImage(string name, Sprite imageSprite)
+    {
+        float timer = 0;
+        while (timer < fadeInHoldFadeOut.x)
+        {
+            timer += Time.unscaledDeltaTime;
+            fade.color = new Color(fade.color.r, fade.color.g, fade.color.b, timer / fadeInHoldFadeOut.x);
+            yield return null;
+        }
+
+
+        image.sprite = imageSprite;
+        image.color = new Color(255, 255, 255, 255);
+
+
+        timer = 0;
+        while (timer < fadeInHoldFadeOut.x)
+        {
+            timer += Time.unscaledDeltaTime;
+            fade.color = new Color(fade.color.r, fade.color.g, fade.color.b, 1 - (timer / fadeInHoldFadeOut.x));
+            yield return null;
+        }
+
+        SceneManager.LoadScene(name);
+        while (SceneManager.GetActiveScene().name != name)
+        {
+            yield return null;
+        }
+
+
+        timer = 0;
+        while (timer < fadeInHoldFadeOut.y)
+        {
+            timer += Time.unscaledDeltaTime;
+            fade.color = new Color(fade.color.r, fade.color.g, fade.color.b, 1);
+            yield return null;
+        }
+
+
+        timer = 0;
+        while (timer < fadeInHoldFadeOut.x)
+        {
+            timer += Time.unscaledDeltaTime;
+            fade.color = new Color(fade.color.r, fade.color.g, fade.color.b, timer / fadeInHoldFadeOut.x);
+            yield return null;
+        }
+
+
+        image.color = new Color(255, 255, 255, 0);
+
+
+        timer = 0;
+        while (timer < fadeInHoldFadeOut.x)
+        {
+            timer += Time.unscaledDeltaTime;
+            fade.color = new Color(fade.color.r, fade.color.g, fade.color.b, 1 - (timer / fadeInHoldFadeOut.x));
             yield return null;
         }
     }
