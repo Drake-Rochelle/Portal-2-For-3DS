@@ -37,4 +37,9 @@ public class Bootloader : MonoBehaviour
         state++;
         state %= scenes.Length;
     }
+    public void SetState(string name)
+    {
+        state = scenes.ToList().IndexOf(name);
+        NextScene();
+    }
 }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController3D : MonoBehaviour 
 {
@@ -34,6 +33,14 @@ public class PlayerController3D : MonoBehaviour
     }
 	void Update () 
 	{
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Escape))
+#else
+        if (UnityEngine.N3DS.GamePad.GetButtonTrigger(N3dsButton.Start))
+#endif
+        {
+            TransitionManager.Instance.Scene("Main Menu");
+        }
 #if UNITY_EDITOR
         angle = cam.rotation.eulerAngles.x;
         if (angle > 180)

@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class TransitionManager : MonoBehaviour
@@ -22,7 +21,7 @@ public class TransitionManager : MonoBehaviour
         {
             Instance = this;
         }
-        DontDestroyOnLoad(gameObject);
+        SceneManager.Instance.DontDestroy(transform);
         StartCoroutine(FadeIn());
     }
     public void Scene(string name, Sprite image = null)
@@ -55,8 +54,8 @@ public class TransitionManager : MonoBehaviour
             fade.color = new Color(fade.color.r, fade.color.g, fade.color.b, timer / fadeInHoldFadeOut.x);
             yield return null;
         }
-        SceneManager.LoadScene(name);
-        while (SceneManager.GetActiveScene().name != name)
+        SceneManager.Instance.LoadScene(name);
+        while (SceneManager.Instance.GetActiveScene() != name)
         {
             yield return null;
         }
@@ -98,8 +97,8 @@ public class TransitionManager : MonoBehaviour
             yield return null;
         }
 
-        SceneManager.LoadScene(name);
-        while (SceneManager.GetActiveScene().name != name)
+        SceneManager.Instance.LoadScene(name);
+        while (SceneManager.Instance.GetActiveScene() != name)
         {
             yield return null;
         }
