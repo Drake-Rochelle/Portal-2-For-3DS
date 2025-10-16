@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
+using UnityEngine;
 
 [ExecuteInEditMode]
 public class WallsManager : MonoBehaviour
@@ -25,7 +28,7 @@ public class WallsManager : MonoBehaviour
     }
     void Update()
     {
-        if (update)
+        if (!UnityEditor.EditorApplication.isPlaying)
         {
             px.material = wall[0];
             mx.material = wall[1];
