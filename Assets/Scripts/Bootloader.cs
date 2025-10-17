@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Bootloader : MonoBehaviour 
@@ -12,6 +13,20 @@ public class Bootloader : MonoBehaviour
     {
         get; private set;
     }
+    private void Update()
+    {
+#if !UNITY_EDITOR
+        if (UnityEngine.N3DS.GamePad.GetButtonTrigger(N3dsButton.ZL) && UnityEngine.N3DS.GamePad.GetButtonHold(N3dsButton.ZR))
+#else
+		if (Input.GetKeyDown(KeyCode.F1))
+#endif
+        {
+            Debug.Log("uibgr");
+            SceneManager.LoadScene(scenes[state]);
+            state++;
+            state %= scenes.Length;
+        }
+    }
     private void Awake()
     {
         if (Instance != null)
@@ -23,6 +38,7 @@ public class Bootloader : MonoBehaviour
         {
             Instance = this;
         }
+        DontDestroyOnLoad(gameObject);
     }
     public void NextScene()
     {
