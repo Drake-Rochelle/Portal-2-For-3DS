@@ -4,8 +4,10 @@ public class MainMenuManger : MonoBehaviour
 {
 	[SerializeField] private RawImage image;
 	[SerializeField] private Texture2D[] menuImages;
-	[SerializeField] private AudioClip buttonClip;
-	[SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip buttonClip;
+    [SerializeField] private AudioClip noClip;
+    [SerializeField] private AudioClip pressClip;
+    [SerializeField] private AudioSource audioSource;
 	private int button;
 	private bool update;
 	void Update () 
@@ -30,11 +32,23 @@ public class MainMenuManger : MonoBehaviour
             }
             update = true;
         }
-		if (Input.GetKeyDown(KeyCode.A)&&button == 0)
+		if (Input.GetKeyDown(KeyCode.A))
 		{
-            audioSource.PlayOneShot(buttonClip);
-            Bootloader.Instance.NextScene();
-		}
+            if (button == 0)
+			{
+                audioSource.PlayOneShot(pressClip);
+                Bootloader.Instance.NextScene();
+            }
+			else if (button == 3)
+			{
+                audioSource.PlayOneShot(pressClip);
+                TransitionManager.Instance.Scene("Settings");
+            }
+            else
+			{
+                audioSource.PlayOneShot(noClip);
+            }
+        }
 		if (update)
 		{
 			audioSource.PlayOneShot(buttonClip);

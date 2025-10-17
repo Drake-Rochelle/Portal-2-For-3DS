@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class Bootloader : MonoBehaviour 
 {
     [SerializeField] private string[] scenes;
     [SerializeField] private string[] gameScenes;
     [SerializeField] private Sprite[] loadingScreens;
+    public bool N3DSMode;
     private int state;
     public static Bootloader Instance
     {
@@ -39,11 +39,16 @@ public class Bootloader : MonoBehaviour
             Instance = this;
         }
         DontDestroyOnLoad(gameObject);
+        N3DSMode = UnityEngine.N3DS.Application.isRunningOnSnake;
     }
     public void NextScene()
     {
         if (gameScenes.Contains<string>(scenes[state]))
         {
+            if (scenes[state].Contains("N3DS") && !N3DSMode)
+            {
+                state++;
+            }
             TransitionManager.Instance.Scene(scenes[state], loadingScreens[Random.Range(0,loadingScreens.Length)]);
         }
         else
