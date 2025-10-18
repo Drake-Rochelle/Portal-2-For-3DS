@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 public class MainMenuManger : MonoBehaviour 
 {
@@ -7,11 +8,31 @@ public class MainMenuManger : MonoBehaviour
     [SerializeField] private AudioClip buttonClip;
     [SerializeField] private AudioClip noClip;
     [SerializeField] private AudioClip pressClip;
-    [SerializeField] private AudioSource audioSource;
-	private int button;
+    [SerializeField] private AudioClip[] music;
+    [SerializeField] private AudioSource buttonAudioSource;
+    [SerializeField] private AudioSource musicAudioSource;
+    [SerializeField] private Text text;
+    [SerializeField] private float showNotification;
+    private bool N3DSMode;
+    private int button;
 	private bool update;
+    private float timer = -1;
+    void Start()
+    {
+        N3DSMode = UnityEngine.N3DS.Application.isRunningOnSnake;
+        musicAudioSource.PlayOneShot(music[Random.Range(0, music.Length)]);
+    }
 	void Update () 
 	{
+        if (timer != -1)
+        {
+            timer += Time.deltaTime;
+        }
+        if (timer>showNotification)
+        {
+            timer = -1;
+            text.text = "";
+        }
         update = false;
         if (Input.GetKeyDown(KeyCode.Keypad2) || Input.GetKeyDown(KeyCode.DownArrow))
 
@@ -36,23 +57,54 @@ public class MainMenuManger : MonoBehaviour
 		{
             if (button == 0)
 			{
-                audioSource.PlayOneShot(pressClip);
+                StartCoroutine(PlayAndDestroy(pressClip, buttonAudioSource.volume));
                 Bootloader.Instance.NextScene();
             }
 			else if (button == 3)
 			{
-                audioSource.PlayOneShot(pressClip);
-                TransitionManager.Instance.Scene("Settings");
+                StartCoroutine(PlayAndDestroy(pressClip, buttonAudioSource.volume));
+                Settings();
             }
             else
 			{
-                audioSource.PlayOneShot(noClip);
+                StartCoroutine(PlayAndDestroy(pressClip, buttonAudioSource.volume));
             }
         }
 		if (update)
 		{
-			audioSource.PlayOneShot(buttonClip);
-			image.texture = menuImages[button];
-		}
+            StartCoroutine(PlayAndDestroy(buttonClip, buttonAudioSource.volume));
+            image.texture = menuImages[button];
+        }
+    }
+    public IEnumerator PlayAndDestroy(AudioClip clip, float volume = 1f)
+    {
+        if (clip == null)
+        {
+            Debug.LogWarning("AudioRitual: Null clip passed to coroutine.");
+            yield break;
+        }
+        GameObject tempGO = new GameObject("TempAudioSource");
+        AudioSource aSource = tempGO.AddComponent<AudioSource>();
+        aSource.clip = clip;
+        aSource.volume = volume;
+        aSource.playOnAwake = false;
+        aSource.loop = false;
+        aSource.Play();
+        yield return new WaitForSeconds(clip.length);
+        Destroy(tempGO);
+    }
+    void Settings()
+    {
+        N3DSMode = !N3DSMode;
+        if (N3DSMode)
+        {
+            text.text = "Now in New 3DS Mode!";
+        }
+        else
+        {
+            text.text = "Now in Old 3DS Mode!";
+        }
+        Bootloader.Instance.N3DSMode = N3DSMode;
+        timer = 0;
     }
 }
