@@ -187,7 +187,6 @@ public class PlayerController3D : MonoBehaviour
             rb.velocity = new Vector3(horVel.x, rb.velocity.y, horVel.y);
         }
         RaycastHit hit;
-        Debug.Log(grounded);
         if ((sidewaysForce == 0 && forwardForce == 0) && grounded)
         {
             rb.velocity = new Vector3(rb.velocity.x / (friction * Time.deltaTime), rb.velocity.y, rb.velocity.z / (friction * Time.deltaTime));
