@@ -29,21 +29,21 @@ public class ButtonManager : MonoBehaviour
 	{
 		if (down)
 		{
-			child.Translate(delta * Time.deltaTime, Space.World);
+			child.Translate(transform.rotation * (delta * Time.deltaTime), Space.World);
 		}
 		else
 		{
-			child.Translate(-delta * Time.deltaTime, Space.World);
+			child.Translate(transform.rotation * (-delta * Time.deltaTime), Space.World);
         }
 		if (child.position.y < init.y + pressDistance.y)
 		{
-            child.position = init+pressDistance;
+            child.position = init+(transform.rotation * pressDistance);
 		}
 		else if (child.position.y > init.y)
 		{
             child.position = init;
 		}
-		if (child.position == init+pressDistance && !isPressed)
+		if (child.position == init + (transform.rotation * pressDistance) && !isPressed)
 		{
 			down = false;
 		}

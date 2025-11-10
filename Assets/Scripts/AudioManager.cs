@@ -1,16 +1,23 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour 
 {
     [SerializeField] private AudioMixerGroup[] mixerGroups;
+    private List<GameObject> sources;
+    private List<Transform> parents;
+    [SerializeField] private int pool;
     public static AudioManager Instance
     {
         get; private set;
     }
     private void Awake()
     {
+        sources = new List<GameObject>();
+        parents = new List<Transform>();
         if (Instance != null)
         {
             Debug.LogWarning("More than one " + this.name + ", ya chump");
@@ -21,6 +28,26 @@ public class AudioManager : MonoBehaviour
             Instance = this;
         }
         DontDestroyOnLoad(gameObject);
+        for (int i = 0; i < pool; i++)
+        {
+            GameObject go = new GameObject("Pooled Audio Source");
+            go.AddComponent<AudioSource>();
+            go.transform.parent = transform;
+            go.SetActive(false);
+            sources.Add(go);
+            parents.Add(transform);
+        }
+    }
+    private void Update()
+    {
+        for (int i = 0;i < pool; i++)
+        {
+            if (!parents[i])
+            {
+                parents[i] = transform;
+                sources[i].GetComponent<AudioSource>().Stop();
+            }
+        }
     }
     public void Play(Transform t,AudioClip c, Mixer mixerGroup = Mixer.None, float volume = 1, bool is3D = false, Vector3 position = new Vector3(), bool loop = false)
     {
@@ -33,31 +60,47 @@ public class AudioManager : MonoBehaviour
             Debug.LogWarning("AudioRitual: Null clip passed to coroutine.");
             yield break;
         }
-        GameObject tempGO = new GameObject("TempAudioSource");
-        tempGO.transform.parent = t;
-        AudioSource aSource = tempGO.AddComponent<AudioSource>();
-        aSource.clip = c;
-        aSource.volume = 1;
-        if (mixerGroup != Mixer.None)
+        AudioSource aSource = GetSource(t);
+        if (aSource != null)
         {
-            aSource.outputAudioMixerGroup = mixerGroups[(int)mixerGroup];
-            //aSource.volume *= mixerGroups[(int)mixerGroup];
+            aSource.gameObject.SetActive(true);
+            aSource.clip = c;
+            aSource.volume = 1;
+            if (mixerGroup != Mixer.None)
+            {
+                aSource.outputAudioMixerGroup = mixerGroups[(int)mixerGroup];
+                //aSource.volume *= mixerGroups[(int)mixerGroup];
+            }
+            aSource.volume *= volume;
+            aSource.spatialBlend = 0;
+            if (is3D)
+            {
+                aSource.transform.position = position;
+                aSource.spatialBlend = 1;
+            }
+            aSource.playOnAwake = false;
+            aSource.loop = loop;
+            aSource.Play();
+            if (!loop)
+            {
+                yield return new WaitForSeconds(c.length);
+                aSource.gameObject.SetActive(false);
+            }
         }
-        aSource.volume *= volume;
-        aSource.spatialBlend = 0;
-        if (is3D)
+    }
+    private AudioSource GetSource(Transform t)
+    {
+        GameObject s;
+        for (int i = 0; i < sources.Count; i++)
         {
-            tempGO.transform.position = position;
-            aSource.spatialBlend = 1;
+            s = sources[i];
+            if (!s.activeInHierarchy)
+            {
+                parents[i] = t;
+                return s.GetComponent<AudioSource>();
+            }
         }
-        aSource.playOnAwake = false;
-        aSource.loop = loop;
-        aSource.Play();
-        if (!loop)
-        {
-            yield return new WaitForSeconds(c.length);
-            Destroy(tempGO);
-        }
+        return null;
     }
     public enum Mixer
     {

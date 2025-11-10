@@ -8,6 +8,7 @@ public class DropperManager : MonoBehaviour
 	[SerializeField] private float[] probs;
 	[SerializeField] private ButtonManager button;
     [SerializeField] private Transform[] propParents;
+    [SerializeField] private Vector3 spawnOffset;
 	private bool clear;
     private void Start()
     {
@@ -36,7 +37,7 @@ public class DropperManager : MonoBehaviour
 		{
 			clear = true;
             int index = UnityEngine.Random.Range(0, props.Length);
-            GameObject go = Instantiate(props[index], transform.position, Quaternion.identity);
+            GameObject go = Instantiate(props[index], transform.position + spawnOffset, Quaternion.identity);
             go.transform.parent = propParents[index];
 		}
 	}

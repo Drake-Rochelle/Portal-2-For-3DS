@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 using UnityEngine.UI;
 public class MainMenuManger : MonoBehaviour 
 {
@@ -10,6 +11,7 @@ public class MainMenuManger : MonoBehaviour
     [SerializeField] private AudioClip[] music;
     [SerializeField] private int touchScreenTick;
     [SerializeField] private string[] items;
+    [SerializeField] private string[] chambers;
     private int button;
 	private bool update;
     private float position;
@@ -87,7 +89,13 @@ public class MainMenuManger : MonoBehaviour
             if (selection == 0)
 			{
                 AudioManager.Instance.Play(transform, pressClip);
-                Bootloader.Instance.NextScene();
+                string path = Path.Combine(Application.persistentDataPath, "CHAMBER");
+                int index = 0;
+                if (File.Exists(path))
+                {
+                    index = int.Parse(File.ReadAllText(path));
+                }
+                Bootloader.Instance.LoadChamber(index, true, 0);
             }
             else
 			{

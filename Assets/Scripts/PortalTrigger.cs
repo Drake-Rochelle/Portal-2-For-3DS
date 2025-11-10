@@ -62,7 +62,6 @@ public class PortalTrigger : MonoBehaviour
                     {
                         if (colls.Contains(portalableObjects[i]))
                         {
-                            Debug.Log("Switch");
                             Teleport(portalableObjects[i]);
                         }
                     }

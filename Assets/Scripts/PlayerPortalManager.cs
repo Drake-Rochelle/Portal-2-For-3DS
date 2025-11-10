@@ -55,7 +55,6 @@ public class PlayerPortalManager : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(cam.position, cam.forward, out hit, 200, raycastMasks[color]))
         {
-            Debug.Log(LayerMask.LayerToName(hit.transform.gameObject.layer));
             bool portalable = false;
             portalable = (portalableMask.value & (1 << hit.transform.gameObject.layer)) != 0;
             if (portalable)

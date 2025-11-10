@@ -9,20 +9,15 @@ public class ChamberTextManager : MonoBehaviour
 	{
 		text = GetComponent<Text>();
 		string sceneName = SceneManager.GetActiveScene().name;
-		for (int i = 100; i > 0; i--)
+		sceneName = sceneName.Split('_')[0];
+		sceneName = sceneName.Split('r')[1];
+		if (sceneName.Length == 1)
 		{
-			if (!sceneName.Contains(i.ToString() + "_")) { continue; }
-			if (i.ToString().Length == 1)
-			{
-				text.text = "Chamber 0" + i.ToString();
-                break;
-            }
-            text.text = "Chamber " + i.ToString();
-            break;
-        }
+			text.text = "Chamber 0" + sceneName;
+		}
+		else
+		{
+			text.text = "Chamber " + sceneName;
+		}
     }
-	void Update () 
-	{
-		
-	}
 }
